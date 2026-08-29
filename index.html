@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0066cc">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Penghitungan Gaji</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f7fb;--card:#fff;--border:#e2e8f0;--text:#1a202c;--text2:#4a5568;--muted:#718096;
+  --primary:#0066cc;--primary-light:#e8f2ff;--primary-dark:#004a99;
+  --accent:#d32f2f;--accent-light:#ffebee;
+  --success:#16a34a;--success-light:#dcfce7;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:16px 16px 100px;font-size:14px}
+.container{max-width:1000px;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:14px;margin:4px 0 22px}
+img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14px rgba(0,102,204,.35)}
+.topbar .titles{flex:1;min-width:0}
+.topbar h1{font-size:1.15em;font-weight:700;letter-spacing:-.3px}
+.topbar p{font-size:.75em;color:var(--muted);margin-top:3px;font-weight:500}
+.top-actions{display:none;gap:8px;flex:none}
+.gear-btn{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.gear-btn:hover{border-color:var(--primary);background:var(--primary-light);transform:rotate(45deg)}
+.gear-btn svg{width:21px;height:21px}
+.lock-btn{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:#fff;color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.lock-btn:hover{border-color:var(--accent);background:var(--accent-light)}
+.lock-btn svg{width:20px;height:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card-title{display:flex;align-items:center;gap:10px;color:var(--primary);font-size:.9em;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--primary-light);text-transform:uppercase;letter-spacing:.8px}
+.card-title svg{width:18px;height:18px;flex:none}
+.card-title .badge{margin-left:auto;background:var(--primary-light);color:var(--primary);padding:3px 10px;border-radius:20px;font-size:.72em;font-weight:700;white-space:nowrap}
+.card-title.clickable{cursor:pointer;user-select:none}
+.card-title .chev{transition:transform .25s;display:flex}
+.card-title .chev svg{width:16px;height:16px}
+.card-title.open .chev{transform:rotate(180deg)}
+.add-btn{width:32px;height:32px;border-radius:9px;border:none;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;margin-left:6px;transition:all .15s;box-shadow:0 2px 8px rgba(0,102,204,.3)}
+.add-btn:hover{background:var(--primary-dark)}
+.add-btn svg{width:16px;height:16px}
+.pick-row{display:flex;gap:10px;align-items:stretch}
+.pick-row .form-group{flex:1;min-width:0}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.form-group{min-width:0;display:flex;flex-direction:column}
+.form-group label{font-size:.7em;color:var(--muted);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group select{width:100%;min-width:0;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font-size:.95em;font-weight:500;transition:all .15s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.form-group input[readonly]{background:var(--primary-light);color:var(--primary);font-weight:700;border-color:var(--primary-light)}
+.s1{grid-column:span 1}.s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}
+.periode-grid{display:grid;grid-template-columns:1fr 108px;gap:12px}
+.att-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.att-grid input{text-align:center;font-weight:700}
+.ro-row{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px dashed var(--border);font-size:.82em}
+.ro-row:last-child{border-bottom:none}
+.ro-row .k{color:var(--text2);font-weight:600}
+.ro-row .v{font-weight:700;color:var(--accent);text-align:right}
+.ro-row .v.ok{color:var(--success)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);color:var(--primary);border:1px solid #bcd9f7;padding:5px 10px;border-radius:20px;font-size:.75em;font-weight:700}
+.chip button{border:none;background:none;color:var(--accent);cursor:pointer;font-size:1em;padding:0;font-weight:800}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border:none;border-radius:8px;font-size:.85em;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;transition:all .15s;box-shadow:0 1px 2px rgba(0,0,0,.05);white-space:nowrap}
+.btn svg{width:16px;height:16px;flex:none}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-success{background:var(--success);color:#fff}
+.btn-outline{background:#fff;color:var(--text2);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm{padding:7px 12px;font-size:.72em}
+.btn-danger-sm{background:#fff;color:var(--accent);border:1px solid var(--accent-light);padding:6px 10px;font-size:.7em;font-weight:600;border-radius:6px;cursor:pointer}
+.btn-block{width:100%;justify-content:center}
+.btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.tab-content{display:none}.tab-content.active{display:block}
+.csel{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1.5px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;font-size:.95em;transition:all .15s;min-height:44px}
+.csel:hover{border-color:var(--primary)}
+.csel svg{width:16px;height:16px;color:var(--muted);flex:none}
+.csel-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;background:#fff;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;font-weight:600;font-size:.9em;transition:all .15s}
+.csel-opt:hover{border-color:var(--primary)}
+.csel-opt .radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex:none;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.csel-opt.active{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
+.csel-opt.active .radio{border-color:var(--primary)}
+.csel-opt.active .radio::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--primary)}
+.modal-csel{max-width:440px}
+.emp-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.emp-card{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;transition:all .15s}
+.emp-card:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+.emp-card .emp-info{min-width:0}
+.emp-card h4{font-size:.95em;margin-bottom:2px;font-weight:700}
+.emp-card .pos{font-size:.75em;color:var(--muted)}
+.emp-card .actions{display:flex;gap:6px;flex:none}
+.emp-empty{padding:28px;text-align:center;color:var(--muted);font-size:.85em;background:var(--bg);border-radius:10px;border:1.5px dashed var(--border);line-height:1.7}
+.holiday-list{max-height:340px;overflow-y:auto;background:var(--bg);border-radius:8px;padding:10px;margin-top:12px;border:1px solid var(--border)}
+.hol-month{display:inline-flex;align-items:center;gap:6px;background:var(--accent-light);color:var(--accent);border:1px solid #ffcdd2;padding:4px 14px;border-radius:20px;font-size:.7em;font-weight:800;letter-spacing:1.5px;margin:12px 0 6px;text-transform:uppercase}
+.hol-month:first-child{margin-top:2px}
+.holiday-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--border);background:#fff;border-radius:8px;margin-bottom:5px;font-size:.82em}
+.add-holiday-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.add-holiday-row input{padding:9px;border:1.5px solid var(--border);border-radius:6px;background:#fff;color:var(--text);font-size:.85em;min-width:0}
+.add-holiday-row input[type=date]{flex:1 1 140px}
+.add-holiday-row input[type=text]{flex:2 1 160px}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+.cal-nav button{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--primary);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cal-nav button:hover{border-color:var(--primary);background:var(--primary-light)}
+.cal-nav button svg{width:18px;height:18px}
+.cal-nav h3{font-size:.95em;color:var(--primary);text-transform:uppercase;letter-spacing:1.5px;text-align:center}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px}
+.cal-day{padding:10px 2px;text-align:center;border-radius:6px;font-size:.78em;font-weight:700}
+.cal-day.header{background:var(--primary);color:#fff;font-size:.7em;letter-spacing:.5px}
+.cal-day.work{background:var(--success-light);color:var(--success)}
+.cal-day.off{background:var(--accent-light);color:var(--accent)}
+.cal-day.holiday{background:#fff3e0;color:#e65100}
+.cal-day.empty{background:transparent}
+.legend{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;font-size:.75em;color:var(--text2);font-weight:500}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:14px;height:14px;border-radius:4px}
+.hist-group{margin-bottom:16px}
+.hist-name{display:flex;align-items:center;gap:8px;font-size:.85em;font-weight:700;color:var(--primary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.hist-name svg{width:15px;height:15px}
+.hist-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:6px;font-size:.82em}
+.hist-item .amt{font-weight:700;color:var(--success);font-size:1.05em}
+.hist-item .sub{color:var(--muted);font-size:.88em;margin-top:2px}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;display:flex;gap:4px;justify-content:space-around;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(255,255,255,.95);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 12px rgba(0,0,0,.04)}
+.nav-btn{flex:1;max-width:100px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border:none;border-radius:10px;background:transparent;color:var(--muted);font-size:.64em;font-weight:700;cursor:pointer;letter-spacing:.3px;text-transform:uppercase}
+.nav-btn svg{width:22px;height:22px}
+.nav-btn.active{background:var(--primary-light);color:var(--primary)}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:300;display:none;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex;animation:fade .2s}
+.modal{background:#f8fafc;width:100%;max-width:900px;max-height:92vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:up .3s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+.modal-sm{max-width:640px}
+.modal .form-grid{grid-template-columns:1fr 1fr}
+.modal-head{display:flex;align-items:center;gap:10px;padding:14px 18px;background:#fff;border-bottom:1px solid var(--border)}
+.modal-head svg{width:20px;height:20px;color:var(--primary)}
+.modal-head h3{font-size:.95em;flex:1;letter-spacing:.3px}
+.modal-body{overflow:auto;padding:16px;flex:1}
+.modal-foot{display:flex;gap:10px;padding:12px 16px;background:#fff;border-top:1px solid var(--border);flex-wrap:wrap}
+.icon-btn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:#fff;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-btn:hover{color:var(--accent);border-color:var(--accent)}
+.icon-btn svg{width:16px;height:16px}
+.sub-title{display:flex;align-items:center;gap:8px;font-size:.75em;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px;padding-top:14px;border-top:1px solid var(--border)}
+.sub-title svg{width:15px;height:15px}
+.sub-title.first{margin-top:0;border-top:none;padding-top:0}
+.sub-tabs{display:flex;gap:4px;background:#eef2f7;padding:4px;border-radius:10px;margin-bottom:14px}
+.sub-tab{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-size:.78em;font-weight:700;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.5px}
+.sub-tab svg{width:15px;height:15px}
+.sub-tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.sub-content{display:none}.sub-content.active{display:block}
+.ded-item{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px}
+.ded-top{display:flex;gap:8px;margin-bottom:10px}
+.ded-top input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88em;min-width:0}
+.ded-top input:focus{outline:none;border-color:var(--primary)}
+.ded-grid{display:grid;grid-template-columns:1.4fr .7fr 1fr;gap:8px}
+.ded-grid .form-group label{font-size:.62em}
+.ded-grid input{padding:9px 10px;font-size:.88em}
+.ded-grid .ded-nom{text-align:right}
+.ded-grid .ded-tenor{text-align:center;font-weight:700}
+.ded-result{margin-top:10px;padding-top:9px;border-top:1px dashed var(--border);font-size:.78em;color:var(--text2);font-weight:600;line-height:1.7}
+.ded-result strong{color:var(--accent)}
+.ded-result .months{color:var(--primary)}
+.ded-empty{font-size:.78em;color:var(--muted);text-align:center;padding:10px;background:var(--bg);border:1.5px dashed var(--border);border-radius:8px;margin-bottom:8px}
+.confirm-box{background:#fff;border-radius:20px;padding:26px 22px;max-width:360px;width:calc(100% - 40px);text-align:center;animation:up .25s;box-shadow:0 20px 50px rgba(0,0,0,.3);margin:auto}
+.confirm-box .c-icon{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.confirm-box .c-icon.red{background:var(--accent-light);color:var(--accent)}
+.confirm-box .c-icon.blue{background:var(--primary-light);color:var(--primary)}
+.confirm-box .c-icon svg{width:26px;height:26px}
+.confirm-box h4{font-size:1em;margin-bottom:6px}
+.confirm-box p{font-size:.8em;color:var(--muted);margin-bottom:14px;line-height:1.6}
+.confirm-box .btn-row{justify-content:center;margin-top:0}
+.pass-input{width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:1em;font-weight:600;text-align:center;letter-spacing:4px;margin-bottom:14px;transition:all .15s}
+.pass-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+.pass-input.shake{animation:shake .3s;border-color:var(--accent)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.72em;margin:14px 0;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.login-overlay{align-items:center;justify-content:center;background:linear-gradient(160deg,#0d2440,#123a6b);z-index:600}
+.login-box{background:#fff;border-radius:20px;padding:28px 22px;width:calc(100% - 60px);max-width:360px;text-align:center;animation:up .3s;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.login-box img.logo{margin:0 auto 12px;display:block;width:68px;height:68px}
+.login-box h2{font-size:1.1em;margin-bottom:4px}
+.login-box p{font-size:.78em;color:var(--muted);margin-bottom:16px}
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-90px);padding:11px 20px;border-radius:12px;font-size:.82em;font-weight:700;z-index:700;display:flex;gap:9px;align-items:center;transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 8px 24px rgba(0,0,0,.25);color:#fff;max-width:calc(100% - 30px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast svg{width:16px;height:16px;flex:none}
+.toast.success{background:var(--success)}
+.toast.error{background:var(--accent)}
+.toast.info{background:var(--primary)}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(50px);opacity:0}}
+.paper{background:#fff;color:#000;font-family:'Courier New',Courier,monospace;font-weight:700;padding:22px;max-width:860px;margin:0 auto;box-shadow:0 4px 20px rgba(0,0,0,.12);border:1px solid var(--border)}
+.modal-body .paper{margin:0;max-width:100%;box-shadow:none}
+.frame{border:3px double #000;padding:14px 18px}
+table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;table-layout:fixed}
+.slip td{padding:3px 2px;vertical-align:top;color:#000;overflow:hidden;white-space:nowrap}
+.slip td.wrap{white-space:normal}
+.slip .lbl{width:46%;padding-left:2px}
+.slip .eq{width:4%;text-align:center}
+.slip .qty{width:12%;text-align:right;font-variant-numeric:tabular-nums}
+.slip .rate{width:12%;text-align:right;font-variant-numeric:tabular-nums}
+.slip .amt{width:26%;text-align:right;font-variant-numeric:tabular-nums;padding-right:4px}
+.slip .title{text-align:center;font-size:16px;letter-spacing:3px;white-space:normal}
+.slip .section td{padding-top:12px}
+.slip tr.line .amt{border-top:1.5px solid #000}
+.slip tr.total .amt{border-top:1.5px solid #000}
+.slip tr.grand td{border-top:1.5px solid #000;font-size:14px;padding-top:6px}
+.slip tr.grand .amt{border-bottom:3px double #000}
+.slip .sp{height:12px}
+.slip .spacer td{height:12px}
+@media (max-width:700px){
+  .form-grid{grid-template-columns:repeat(2,1fr)}
+  .s2,.s3,.s4{grid-column:span 2}
+  .att-grid{grid-template-columns:repeat(4,1fr)}
+  .att-grid .form-group label{font-size:.6em}
+  .paper{padding:12px}
+  .frame{padding:10px}
+  table.slip{font-size:9.5px}
+  .slip .title{font-size:12px;letter-spacing:2px}
+  .slip tr.grand td{font-size:10.5px}
+  .ded-grid{grid-template-columns:1.2fr .6fr 1fr}
+  .pick-row .btn{padding:11px 14px}
+  .sub-tab{font-size:.68em;padding:8px 6px}
+}
+@media print{
+  body{padding:0;background:#fff}
+  body *{visibility:hidden}
+  #modalPaper,#modalPaper *{visibility:visible}
+  .overlay{position:static!important;background:none!important;backdrop-filter:none!important;display:block!important;padding:0}
+  .modal{position:static!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;border-radius:0}
+  .modal-body{overflow:visible!important;padding:0}
+  .modal-head,.modal-foot,.bottomnav,.toast{display:none!important}
+  #modalPaper{position:absolute;left:0;top:0;width:100%;max-width:100%;box-shadow:none;border:none;padding:8px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="topbar">
+    <img class="logo" src="icon.svg" alt="Logo Penghitungan Gaji">
+    <div class="titles">
+      <h1>Penghitungan Gaji</h1>
+      <p>Aplikasi penghitungan gaji karyawan &bull; v<span data-version>1.1.0</span></p>
+    </div>
+    <div class="top-actions" id="topActions">
+      <button class="lock-btn" onclick="lockData()" title="Kunci Data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
+      <button class="gear-btn" onclick="openSettings()" title="Pengaturan Perusahaan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
+  </header>
+
+  <!-- TAB INPUT -->
+  <div id="tab-input" class="tab-content active">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Pilih Karyawan <span class="badge" id="selectedBadge">Belum dipilih</span></div>
+      <div class="pick-row">
+        <div class="form-group">
+          <div class="csel" onclick="openCSel('emp','Pilih Karyawan')"><span id="csEmpVal">— Pilih Karyawan —</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <button class="btn btn-primary" onclick="hitungGaji()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg> Hitung Gaji</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Periode</div>
+      <div class="periode-grid">
+        <div class="form-group">
+          <div class="csel" onclick="openCSel('bulan','Pilih Bulan')"><span id="csBulanVal">-</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="form-group"><label>Tahun</label><input type="number" id="tahun" value="2026"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sub-tabs">
+        <button class="sub-tab active" data-sub="att" onclick="switchSub('att')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
+          Kehadiran & Lembur
+        </button>
+        <button class="sub-tab" data-sub="pot" onclick="switchSub('pot')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+          Potongan
+        </button>
+      </div>
+
+      <div class="sub-content active" id="sub-att">
+        <div class="att-grid">
+          <div class="form-group"><label>Hari Kerja</label><input type="number" id="hariKerja" readonly value="" placeholder="-"></div>
+          <div class="form-group"><label>Masuk</label><input type="number" id="hariMasuk" readonly value="" placeholder="-"></div>
+          <div class="form-group"><label>Izin</label><input type="number" id="ijin" value="" placeholder="0" min="0" onchange="calcOtomatis()"></div>
+          <div class="form-group"><label>Sakit</label><input type="number" id="sakit" value="" placeholder="0" min="0" onchange="calcOtomatis()"></div>
+          <div class="form-group"><label>Alpha</label><input type="number" id="alpha" value="" placeholder="0" min="0" onchange="calcOtomatis()"></div>
+          <div class="form-group"><label>Cuti</label><input type="number" id="cuti" value="" placeholder="0" min="0" onchange="calcOtomatis()"></div>
+          <div class="form-group"><label>Telat</label><input type="number" id="terlambat" value="" placeholder="0" min="0"></div>
+          <div class="form-group"><label>L. Rutin (hari)</label><input type="number" id="lemburRHari" value="" placeholder="0" step="0.5" min="0"></div>
+          <div class="form-group"><label>L. Tambahan (hari)</label><input type="number" id="lemburTHari" value="" placeholder="0" step="0.5" min="0"></div>
+        </div>
+      </div>
+
+      <div class="sub-content" id="sub-pot">
+        <div id="potInfo"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB KALENDER -->
+  <div id="tab-calendar" class="tab-content">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg> Kalender Kerja</div>
+      <div class="cal-nav">
+        <button onclick="calNav(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <h3 id="calTitle">-</h3>
+        <button onclick="calNav(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--success-light);border:1px solid var(--success)"></div> Hari Kerja</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-light);border:1px solid var(--accent)"></div> Minggu</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fff3e0;border:1px solid #e65100"></div> Tgl Merah</div>
+      </div>
+      <div id="calendarPreview"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title clickable" id="holTitle" onclick="toggleHoliday()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Tanggal Merah <span class="badge" id="holCount">0</span>
+        <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </div>
+      <div id="holidayBody" style="display:none">
+        <div class="add-holiday-row">
+          <input type="date" id="holidayDate">
+          <input type="text" id="holidayName" placeholder="Nama hari libur">
+          <button class="btn btn-primary btn-sm" onclick="addHoliday()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah</button>
+          <button class="btn btn-accent btn-sm" onclick="loadDefaultHolidays()">Load Default</button>
+        </div>
+        <div class="holiday-list" id="holidayList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB RIWAYAT -->
+  <div id="tab-history" class="tab-content">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg> Riwayat Gaji Karyawan</div>
+      <div id="histList"></div>
+    </div>
+  </div>
+
+  <!-- TAB DATA -->
+  <div id="tab-data" class="tab-content">
+    <div class="card">
+      <div class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> Daftar Karyawan <span class="badge" id="empCount">0 orang</span><button class="add-btn" onclick="openEmpModal()" title="Tambah Data Karyawan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button></div>
+      <div class="emp-list" id="empList"></div>
+    </div>
+  </div>
+
+  <nav class="bottomnav no-print">
+    <button class="nav-btn active" data-tab="input" onclick="handleNav('input')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Input</button>
+    <button class="nav-btn" data-tab="calendar" onclick="handleNav('calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>Kalender</button>
+    <button class="nav-btn" data-tab="history" onclick="handleNav('history')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Riwayat</button>
+    <button class="nav-btn" data-tab="data" onclick="handleNav('data')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Data</button>
+  </nav>
+</div>
+
+<!-- LOGIN -->
+<div class="overlay login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <img class="logo" src="icon.svg" alt="Logo">
+    <h2>Penghitungan Gaji</h2>
+    <p>Masukkan password untuk masuk &bull; v<span data-version>1.1.0</span></p>
+    <input type="password" id="loginPassInput" class="pass-input" placeholder="• • • •" autocomplete="off">
+    <button class="btn btn-primary btn-block" onclick="checkLogin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Masuk</button>
+    <div class="divider"><span>atau</span></div>
+    <button class="btn btn-outline btn-block" onclick="loginFingerprint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg> Login dengan Sidik Jari</button>
+  </div>
+</div>
+
+<!-- POPUP SLIP -->
+<div class="overlay" id="slipOverlay" onclick="if(event.target===this)closeSlip()">
+  <div class="modal">
+    <div class="modal-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <h3 id="slipModalTitle">Slip Gaji</h3>
+      <button class="icon-btn" onclick="closeSlip()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body"><div class="paper" id="modalPaper"><div class="frame"><table class="slip" id="slipTable"></table></div></div></div>
+    <div class="modal-foot">
+      <button class="btn btn-success" onclick="saveToHistory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan</button>
+      <button class="btn btn-primary" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Cetak / PDF</button>
+      <button class="btn btn-outline" onclick="closeSlip()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP CUSTOM SELECT -->
+<div class="overlay" id="cselOverlay" onclick="if(event.target===this)closeCSel()">
+  <div class="modal modal-csel">
+    <div class="modal-head">
+      <h3 id="cselTitle">Pilih</h3>
+      <button class="icon-btn" onclick="closeCSel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body" id="cselList"></div>
+  </div>
+</div>
+
+<!-- POPUP PASSWORD DATA -->
+<div class="overlay" id="passOverlay">
+  <div class="confirm-box">
+    <div class="c-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+    <h4>Akses Data Karyawan</h4>
+    <p>Masukkan password atau gunakan sidik jari</p>
+    <input type="password" id="passInput" class="pass-input" placeholder="• • • •" autocomplete="off">
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="closePass()">Batal</button>
+      <button class="btn btn-primary" onclick="checkPass()">Masuk</button>
+    </div>
+    <div class="divider"><span>atau</span></div>
+    <button class="btn btn-outline btn-block" onclick="passFingerprint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg> Masuk dengan Sidik Jari</button>
+  </div>
+</div>
+
+<!-- POPUP PENGATURAN -->
+<div class="overlay" id="setOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <h3>Pengaturan Perusahaan</h3>
+      <button class="icon-btn" onclick="closeSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="sub-title first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/></svg> Perusahaan</div>
+      <div class="form-grid">
+        <div class="form-group s2"><label>Nama Perusahaan</label><input type="text" id="stNama" placeholder="PT ..."></div>
+        <div class="form-group"><label>Tanggal Cut-off</label><input type="number" id="stCutoff" value="27" min="1" max="31"></div>
+        <div class="form-group"><label>Pot. Izin / Hari</label><input type="text" inputmode="numeric" class="rp" id="stPotIzin" placeholder="Rp 0"></div>
+        <div class="form-group"><label>Pot. Sakit / Hari</label><input type="text" inputmode="numeric" class="rp" id="stPotSakit" placeholder="Rp 0"></div>
+        <div class="form-group"><label>Pot. Alpha / Hari</label><input type="text" inputmode="numeric" class="rp" id="stPotAlpha" placeholder="Rp 0"></div>
+      </div>
+
+      <div class="sub-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Keamanan & Ubah Password</div>
+      <div class="form-grid">
+        <div class="form-group s2"><label>Password Lama (verifikasi)</label><input type="password" id="stOldPass" placeholder="wajib diisi jika ganti password" autocomplete="off"></div>
+        <div class="form-group"><label>Password Login Baru</label><input type="text" id="stLoginPass" placeholder="kosongkan jika tetap" autocomplete="off"></div>
+        <div class="form-group"><label>Password Data Baru</label><input type="text" id="stPass" placeholder="kosongkan jika tetap" autocomplete="off"></div>
+      </div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-outline btn-sm" onclick="enableFingerprint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg> Aktifkan Sidik Jari</button>
+      </div>
+
+      <div class="sub-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Daftar Cabang</div>
+      <div class="chips" id="stCabChips"></div>
+      <div class="add-holiday-row">
+        <input type="text" id="stNewCabang" placeholder="Nama cabang baru (cth: CABANG 2)">
+        <button class="btn btn-outline btn-sm" onclick="addCabangModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary" onclick="saveSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Pengaturan</button>
+      <button class="btn btn-outline" onclick="closeSettings()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP MASTER KARYAWAN -->
+<div class="overlay" id="empOverlay" onclick="if(event.target===this)closeEmpModal()">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <h3 id="empModalTitle">Tambah Data Karyawan</h3>
+      <button class="icon-btn" onclick="closeEmpModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Nama Karyawan</label><input type="text" id="mNama" placeholder="cth: RIZKY"></div>
+        <div class="form-group"><label>Jabatan</label><input type="text" id="mJabatan" placeholder="cth: SALES"></div>
+        <div class="form-group"><label>Cabang</label>
+          <div class="csel" onclick="openCSel('cabang','Pilih Cabang')"><span id="csCabangVal">-</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="form-group"><label>Premi Hadir 1 (%)</label><input type="number" id="mP1" value="0" step="0.5"></div>
+        <div class="form-group"><label>Gaji Pokok</label><input type="text" inputmode="numeric" class="rp" id="mGaji" placeholder="Rp 0"></div>
+        <div class="form-group"><label>Uang Makan / Hari</label><input type="text" inputmode="numeric" class="rp" id="mMakan" placeholder="Rp 0"></div>
+        <div class="form-group"><label>Premi Hadir 2 (%)</label><input type="number" id="mP2" value="10" step="0.5"></div>
+        <div class="form-group"><label>Lembur Rutin / Hari</label><input type="text" inputmode="numeric" class="rp" id="mLR" placeholder="Rp 0"></div>
+        <div class="form-group s2"><label>Lembur Tambahan / Hari</label><input type="text" inputmode="numeric" class="rp" id="mLT" placeholder="Rp 0"></div>
+      </div>
+      <div class="sub-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h9"/><line x1="16" y1="19" x2="22" y2="19"/><line x1="19" y1="16" x2="19" y2="22"/></svg> Pinjaman / Cicilan (Sisa Otomatis)</div>
+      <div id="dedEditor"></div>
+      <button class="btn btn-outline btn-sm" onclick="addDedRow()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Pinjaman / Cicilan</button>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary" onclick="saveEmployee()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Data</button>
+      <button class="btn btn-outline" onclick="closeEmpModal()">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP CONFIRM -->
+<div class="overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="c-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+    <h4>Konfirmasi</h4>
+    <p id="confirmMsg">Yakin?</p>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="closeConfirm()">Batal</button>
+      <button class="btn btn-accent" onclick="doConfirm()">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const APP_VERSION = '1.1.0';
+let holidays = [], employees = [], history = [], settings = null, currentEmpId = null, lastSlip = null, confirmCb = null, toastTimer = null, modalDeds = [], modalCab = [];
+let calB = 0, calY = 2026, dataUnlocked = false;
+let curEmp = '', curBulan = 0, curTahun = 2026, curCabang = '', cselKey = null;
+const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function sGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function sSet(k,v){ try { localStorage.setItem(k, v); } catch(e){} }
+function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+function fmt2(n){ return n.toFixed(2); }
+function esc(s){ return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function calcMonthly(nom, tenor){ return Math.round((nom||0) / Math.max(1, tenor||1)); }
+function parseDate(s){ const p = s.split('-'); return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])); }
+function formatDate(s){
+  const d = parseDate(s);
+  const M = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+  const D = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  return D[d.getDay()] + ', ' + d.getDate() + ' ' + M[d.getMonth()] + ' ' + d.getFullYear();
+}
+const MNS = ['JAN','FEB','MAR','APR','MEI','JUN','JUL','AGU','SEP','OKT','NOV','DES'];
+
+function buildSchedule(start, tenor){
+  if (!start) return [];
+  const p = start.split('-');
+  const sy = parseInt(p[0]), sm = parseInt(p[1]) - 1;
+  const arr = [];
+  for (let i=0; i<Math.max(1,tenor||1); i++){
+    const total = sm + i;
+    arr.push({y: sy + Math.floor(total/12), m: total % 12});
+  }
+  return arr;
+}
+function scheduleLabel(start, tenor){
+  return buildSchedule(start, tenor).map(s => MNS[s.m]+' '+String(s.y).slice(2)).join(', ');
+}
+function dedInfo(d, tahun, bulan){
+  const m = calcMonthly(d.nominal, d.tenor);
+  const sched = buildSchedule(d.start, d.tenor);
+  const curKey = tahun*12 + bulan;
+  const hit = sched.some(s => s.y===tahun && s.m===bulan);
+  const sisa = sched.filter(s => (s.y*12+s.m) >= curKey).length;
+  return {m, hit, sisa};
+}
+function defaultStart(){ return curTahun + '-' + String(curBulan+1).padStart(2,'0'); }
+
+function rpSet(id, num){
+  const el = document.getElementById(id);
+  el.dataset.raw = String(num||0);
+  el.value = num ? 'Rp ' + Number(num).toLocaleString('en-US') : '';
+}
+function rpGet(id){ return parseInt(document.getElementById(id).dataset.raw || '0') || 0; }
+function rpVal(el){ return parseInt(el.dataset.raw || '0') || 0; }
+document.addEventListener('focusin', function(ev){
+  const t = ev.target;
+  if (t.matches('input.rp')) { t.value = ''; t.dataset.raw = ''; }
+  else if (t.matches('input[type=number]:not([readonly])')) { t.value = ''; }
+  else if (t.matches('input[type=text]:not(.rp):not(.pass-input)')) { try { t.select(); } catch(e){} }
+});
+document.addEventListener('focusout', function(ev){
+  const t = ev.target;
+  if (t.matches('input[type=number]:not([readonly])') && t.value === '') t.value = t.matches('.ded-tenor') ? '1' : '0';
+});
+document.addEventListener('input', function(ev){
+  const t = ev.target;
+  if (t.matches('input.rp')) {
+    const d = t.value.replace(/\D/g,'');
+    t.dataset.raw = d;
+    t.value = d ? 'Rp ' + Number(d).toLocaleString('en-US') : '';
+  }
+  const item = t.closest ? t.closest('#dedEditor .ded-item') : null;
+  if (item) updateDedResult(item);
+});
+function updateDedResult(item){
+  const nom = rpVal(item.querySelector('.ded-nom'));
+  const tenor = parseInt(item.querySelector('.ded-tenor').value)||1;
+  const start = item.querySelector('.ded-start').value || defaultStart();
+  const st = item.querySelector('.ded-result');
+  if (st) st.innerHTML = 'Cicilan per bulan: <strong>Rp ' + fmt(calcMonthly(nom, tenor)) + '</strong><br>Dipotong di bulan: <span class="months">' + scheduleLabel(start, tenor) + '</span>';
+}
+
+function toast(msg, type){
+  const t = document.getElementById('toast');
+  t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' + msg;
+  t.className = 'toast show ' + (type||'info');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function showConfirm(msg, cb){ document.getElementById('confirmMsg').textContent = msg; confirmCb = cb; document.getElementById('confirmOverlay').classList.add('show'); }
+function closeConfirm(){ document.getElementById('confirmOverlay').classList.remove('show'); confirmCb = null; }
+function doConfirm(){ document.getElementById('confirmOverlay').classList.remove('show'); if (confirmCb) confirmCb(); confirmCb = null; }
+
+function checkLogin(){
+  const v = document.getElementById('loginPassInput').value;
+  if (v === settings.loginPass) { enterApp(); }
+  else {
+    const inp = document.getElementById('loginPassInput');
+    inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+    toast('Password salah!','error');
+  }
+}
+function enterApp(){
+  document.getElementById('loginOverlay').classList.remove('show');
+  toast('Selamat datang!','success');
+}
+async function verifyFingerprint(onSuccess){
+  const saved = sGet('gajiFingerCred');
+  if (!saved || !window.PublicKeyCredential) { toast('Sidik jari belum diaktifkan / tidak didukung','error'); return; }
+  try {
+    const id = Uint8Array.from(atob(saved), c => c.charCodeAt(0));
+    await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        allowCredentials: [{type:'public-key', id: id}],
+        userVerification: 'required',
+        timeout: 60000
+      }
+    });
+    onSuccess();
+  } catch(e) { toast('Verifikasi sidik jari gagal','error'); }
+}
+function loginFingerprint(){ verifyFingerprint(enterApp); }
+function passFingerprint(){
+  verifyFingerprint(function(){
+    dataUnlocked = true;
+    closePass();
+    switchTab('data');
+    toast('Akses Data dibuka','success');
+  });
+}
+async function enableFingerprint(){
+  if (!window.PublicKeyCredential) { toast('Perangkat tidak mendukung sidik jari','error'); return; }
+  try {
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp: { name: 'Penghitungan Gaji' },
+        user: { id: new Uint8Array([1,2,3,4,5,6]), name: 'admin', displayName: 'Admin' },
+        pubKeyCredParams: [{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+        authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required' },
+        timeout: 60000
+      }
+    });
+    sSet('gajiFingerCred', btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(cred.rawId)))));
+    toast('Sidik jari aktif!','success');
+  } catch(e) { toast('Gagal aktifkan sidik jari','error'); }
+}
+
+function showPass(){
+  document.getElementById('passInput').value = '';
+  document.getElementById('passInput').classList.remove('shake');
+  document.getElementById('passOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('passInput').focus(), 100);
+}
+function closePass(){ document.getElementById('passOverlay').classList.remove('show'); }
+function checkPass(){
+  const v = document.getElementById('passInput').value;
+  if (v === settings.password) {
+    dataUnlocked = true;
+    closePass();
+    switchTab('data');
+    toast('Akses Data dibuka','success');
+  } else {
+    const inp = document.getElementById('passInput');
+    inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+    toast('Password salah!','error');
+  }
+}
+function lockData(){
+  dataUnlocked = false;
+  switchTab('input');
+  toast('Data dikunci','info');
+}
+
+function loadSettings(){
+  settings = {nama:'PT BIOLI LESTARI', potIzinRate:103334, potSakitRate:0, potAlphaRate:103334, cutoff:27, cabangs:['PUSAT'], password:'1234', loginPass:'1234'};
+  const s = sGet('gajiSettingsV4');
+  if (s) { try { settings = Object.assign(settings, JSON.parse(s)); } catch(e){} }
+}
+function openSettings(){
+  document.getElementById('stNama').value = settings.nama || '';
+  document.getElementById('stCutoff').value = settings.cutoff || 27;
+  document.getElementById('stOldPass').value = '';
+  document.getElementById('stLoginPass').value = '';
+  document.getElementById('stPass').value = '';
+  rpSet('stPotIzin', settings.potIzinRate);
+  rpSet('stPotSakit', settings.potSakitRate);
+  rpSet('stPotAlpha', settings.potAlphaRate);
+  modalCab = (settings.cabangs||[]).slice();
+  renderStCab();
+  document.getElementById('setOverlay').classList.add('show');
+}
+function closeSettings(){ document.getElementById('setOverlay').classList.remove('show'); }
+function renderStCab(){
+  document.getElementById('stCabChips').innerHTML = modalCab.map((c,i) =>
+    '<span class="chip">'+esc(c)+' <button onclick="delCabModal('+i+')">✕</button></span>').join('') ||
+    '<span style="font-size:.78em;color:var(--muted)">Belum ada cabang.</span>';
+}
+function addCabangModal(){
+  const v = document.getElementById('stNewCabang').value.trim();
+  if (!v){ toast('Isi nama cabang!','error'); return; }
+  if (modalCab.some(c => c.toLowerCase()===v.toLowerCase())){ toast('Cabang sudah ada!','error'); return; }
+  modalCab.push(v);
+  renderStCab();
+  document.getElementById('stNewCabang').value = '';
+}
+function delCabModal(i){ modalCab.splice(i,1); renderStCab(); }
+function saveSettings(){
+  settings.nama = document.getElementById('stNama').value.trim();
+  settings.cutoff = Math.min(31, Math.max(1, parseInt(document.getElementById('stCutoff').value)||27));
+  const oldPass = document.getElementById('stOldPass').value;
+  const newLogin = document.getElementById('stLoginPass').value.trim();
+  const newData = document.getElementById('stPass').value.trim();
+  const changeLogin = newLogin && newLogin !== settings.loginPass;
+  const changeData = newData && newData !== settings.password;
+  if (changeLogin || changeData) {
+    if (!oldPass) { toast('Masukkan password lama untuk mengganti password!','error'); return; }
+    if (changeLogin && oldPass !== settings.loginPass) { toast('Password lama salah!','error'); return; }
+    if (changeData && oldPass !== settings.password) { toast('Password lama salah!','error'); return; }
+    if (changeLogin) settings.loginPass = newLogin;
+    if (changeData) settings.password = newData;
+  }
+  settings.potIzinRate = rpGet('stPotIzin');
+  settings.potSakitRate = rpGet('stPotSakit');
+  settings.potAlphaRate = rpGet('stPotAlpha');
+  settings.cabangs = modalCab.slice();
+  sSet('gajiSettingsV4', JSON.stringify(settings));
+  closeSettings();
+  calcOtomatis();
+  toast('Pengaturan perusahaan disimpan','success');
+}
+
+function cselOptions(key){
+  if (key==='emp') return employees.map(e => ({v:e.id, l:e.nama+' — '+e.jabatan}));
+  if (key==='bulan') return MONTHS.map((m,i) => ({v:i, l:m}));
+  if (key==='cabang') return (settings.cabangs||[]).map(c => ({v:c, l:c}));
+  return [];
+}
+function cselCurrent(key){ return key==='emp' ? curEmp : key==='bulan' ? curBulan : curCabang; }
+function openCSel(key, title){
+  cselKey = key;
+  document.getElementById('cselTitle').textContent = title;
+  const cur = cselCurrent(key);
+  const opts = cselOptions(key);
+  document.getElementById('cselList').innerHTML = opts.length ? opts.map((o,i) =>
+    '<div class="csel-opt '+(String(o.v)===String(cur)?'active':'')+'" onclick="pickCSel('+i+')"><span>'+esc(o.l)+'</span><span class="radio"></span></div>'
+  ).join('') : '<p class="ded-empty">Tidak ada opsi tersedia.</p>';
+  document.getElementById('cselOverlay').classList.add('show');
+}
+function closeCSel(){ document.getElementById('cselOverlay').classList.remove('show'); }
+function pickCSel(i){
+  const o = cselOptions(cselKey)[i]; if (!o) return;
+  if (cselKey==='emp') { curEmp = o.v; renderEmpSelect(); loadSelectedEmp(); }
+  else if (cselKey==='bulan') { curBulan = o.v; document.getElementById('csBulanVal').textContent = o.l; syncCal(); calcOtomatis(); }
+  else if (cselKey==='cabang') { curCabang = o.v; document.getElementById('csCabangVal').textContent = o.l; }
+  closeCSel();
+}
+
+function loadEmployees(){
+  const saved = sGet('gajiEmployeesV5');
+  if (saved) { try { employees = JSON.parse(saved); } catch(e){ employees = []; } }
+  if (!employees.length) {
+    employees = [{id:'E1',nama:'RIZKY',jabatan:'SALES',cabang:'PUSAT',gaji:2583349,makan:60000,p1:0,p2:10,lr:206668,lt:206668,deductions:[]}];
+  }
+  employees.forEach(e => {
+    (e.deductions||[]).forEach(d => {
+      if (!d.tenor) d.tenor = 1;
+      if (!d.start) d.start = '2026-08';
+    });
+  });
+  saveEmployees();
+  renderEmployees(); renderEmpSelect();
+}
+function saveEmployees(){ sSet('gajiEmployeesV5', JSON.stringify(employees)); }
+function currentEmp(){ return employees.find(x => x.id === curEmp); }
+
+function readDedsFromDOM(){
+  const arr = [];
+  document.querySelectorAll('#dedEditor .ded-item').forEach(it => {
+    arr.push({
+      nama: it.querySelector('.ded-nama').value.trim(),
+      nominal: rpVal(it.querySelector('.ded-nom')),
+      tenor: Math.max(1, parseInt(it.querySelector('.ded-tenor').value)||1),
+      start: it.querySelector('.ded-start').value || defaultStart()
+    });
+  });
+  return arr;
+}
+function renderDedEditor(){
+  const el = document.getElementById('dedEditor');
+  if (!modalDeds.length){ el.innerHTML = '<p class="ded-empty">Belum ada pinjaman / cicilan.</p>'; return; }
+  el.innerHTML = modalDeds.map((d,i) => `
+    <div class="ded-item">
+      <div class="ded-top">
+        <input type="text" class="ded-nama" placeholder="Nama (cth: Cicilan HP)" value="${esc(d.nama)}">
+        <button class="btn-danger-sm" onclick="delDedRow(${i})">✕</button>
+      </div>
+      <div class="ded-grid">
+        <div class="form-group"><label>Nominal Pinjaman</label><input type="text" inputmode="numeric" class="rp ded-nom" data-raw="${d.nominal||''}" value="${d.nominal ? 'Rp '+Number(d.nominal).toLocaleString('en-US') : ''}" placeholder="Rp 0"></div>
+        <div class="form-group"><label>Tenor (x)</label><input type="number" class="ded-tenor" min="1" value="${d.tenor||1}"></div>
+        <div class="form-group"><label>Mulai Potong</label><input type="month" class="ded-start" value="${d.start||defaultStart()}"></div>
+      </div>
+      <div class="ded-result"></div>
+    </div>`).join('');
+  document.querySelectorAll('#dedEditor .ded-item').forEach(updateDedResult);
+}
+function addDedRow(){ modalDeds = readDedsFromDOM(); modalDeds.push({nama:'',nominal:0,tenor:3,start:defaultStart()}); renderDedEditor(); }
+function delDedRow(i){ modalDeds = readDedsFromDOM(); modalDeds.splice(i,1); renderDedEditor(); }
+
+function openEmpModal(id){
+  currentEmpId = id || null;
+  document.getElementById('empModalTitle').textContent = id ? 'Edit Data Karyawan' : 'Tambah Data Karyawan';
+  const e = id ? employees.find(x => x.id === id) : null;
+  curCabang = e ? (e.cabang||'') : (settings.cabangs[0]||'');
+  document.getElementById('csCabangVal').textContent = curCabang || '-';
+  document.getElementById('mNama').value = e ? e.nama : '';
+  document.getElementById('mJabatan').value = e ? e.jabatan : '';
+  rpSet('mGaji', e ? e.gaji : 0);
+  rpSet('mMakan', e ? e.makan : 0);
+  document.getElementById('mP1').value = e ? e.p1 : 0;
+  document.getElementById('mP2').value = e ? e.p2 : 10;
+  rpSet('mLR', e ? e.lr : 0);
+  rpSet('mLT', e ? e.lt : 0);
+  modalDeds = e && e.deductions ? JSON.parse(JSON.stringify(e.deductions)) : [];
+  renderDedEditor();
+  document.getElementById('empOverlay').classList.add('show');
+}
+function closeEmpModal(){ document.getElementById('empOverlay').classList.remove('show'); currentEmpId = null; }
+
+function saveEmployee(){
+  const nama = document.getElementById('mNama').value.trim();
+  const jabatan = document.getElementById('mJabatan').value.trim();
+  if (!nama || !jabatan){ toast('Nama & jabatan wajib diisi!','error'); return; }
+  const deds = readDedsFromDOM().filter(d => d.nama && d.nominal > 0);
+  const data = {
+    id: currentEmpId || ('E'+Date.now()),
+    nama, jabatan,
+    cabang: curCabang,
+    gaji: rpGet('mGaji'), makan: rpGet('mMakan'),
+    p1: parseFloat(document.getElementById('mP1').value)||0,
+    p2: parseFloat(document.getElementById('mP2').value)||0,
+    lr: rpGet('mLR'), lt: rpGet('mLT'),
+    deductions: deds
+  };
+  const idx = employees.findIndex(x => x.id === currentEmpId);
+  if (idx >= 0) { employees[idx] = data; toast('Data "'+nama+'" diperbarui','success'); }
+  else { employees.push(data); toast('Data "'+nama+'" tersimpan','success'); }
+  saveEmployees(); renderEmployees(); renderEmpSelect();
+  loadSelectedEmp();
+  closeEmpModal();
+}
+function deleteEmployee(id){
+  const e = employees.find(x => x.id === id); if (!e) return;
+  showConfirm('Hapus data karyawan "'+e.nama+'"?', function(){
+    employees = employees.filter(x => x.id !== id);
+    saveEmployees(); renderEmployees(); renderEmpSelect();
+    toast('Data "'+e.nama+'" dihapus','success');
+  });
+}
+function loadSelectedEmp(){
+  const e = currentEmp();
+  document.getElementById('selectedBadge').textContent = e ? e.nama : 'Belum dipilih';
+  updatePotInfo();
+  calcOtomatis();
+}
+function updatePotInfo(){
+  const el = document.getElementById('potInfo');
+  const e = currentEmp();
+  if (!e){ el.innerHTML = '<div class="ro-row"><span class="k">Belum ada karyawan dipilih</span><span class="v">-</span></div>'; return; }
+  const i = parseInt(document.getElementById('ijin').value)||0;
+  const s = parseInt(document.getElementById('sakit').value)||0;
+  const a = parseInt(document.getElementById('alpha').value)||0;
+  let h = '';
+  h += '<div class="ro-row"><span class="k">Potongan Izin</span><span class="v">'+(i>0 && settings.potIzinRate>0 ? i+' hari × Rp '+fmt(settings.potIzinRate)+' = Rp '+fmt(i*settings.potIzinRate) : 'Tidak ada')+'</span></div>';
+  h += '<div class="ro-row"><span class="k">Potongan Sakit</span><span class="v">'+(s>0 && settings.potSakitRate>0 ? s+' hari × Rp '+fmt(settings.potSakitRate)+' = Rp '+fmt(s*settings.potSakitRate) : 'Tidak ada')+'</span></div>';
+  h += '<div class="ro-row"><span class="k">Potongan Alpha / Bolos</span><span class="v">'+(a>0 && settings.potAlphaRate>0 ? a+' hari × Rp '+fmt(settings.potAlphaRate)+' = Rp '+fmt(a*settings.potAlphaRate) : 'Tidak ada')+'</span></div>';
+  const act = (e.deductions||[]).map(d => ({d, info: dedInfo(d, curTahun, curBulan)})).filter(x => x.info.hit && x.info.m>0);
+  if (act.length) {
+    act.forEach(x => { h += '<div class="ro-row"><span class="k">'+esc(x.d.nama)+'</span><span class="v">Rp '+fmt(x.info.m)+'/bln • sisa '+x.info.sisa+'x</span></div>'; });
+  } else {
+    h += '<div class="ro-row"><span class="k">Cicilan jatuh tempo bulan ini</span><span class="v ok">Tidak ada</span></div>';
+  }
+  el.innerHTML = h;
+}
+function renderEmployees(){
+  const el = document.getElementById('empList');
+  document.getElementById('empCount').textContent = employees.length + ' orang';
+  if (!employees.length){ el.innerHTML = '<div class="emp-empty">Belum ada data karyawan.<br>Klik tombol + untuk menambah.</div>'; return; }
+  el.innerHTML = employees.map(e => `
+    <div class="emp-card">
+      <div class="emp-info">
+        <h4>${esc(e.nama)}</h4>
+        <div class="pos">${esc(e.jabatan)}${e.cabang?' • '+esc(e.cabang):''}</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline btn-sm" onclick="openEmpModal('${e.id}')">Edit</button>
+        <button class="btn-danger-sm" onclick="deleteEmployee('${e.id}')">Hapus</button>
+      </div>
+    </div>`).join('');
+}
+function renderEmpSelect(){
+  const e = currentEmp();
+  document.getElementById('csEmpVal').textContent = e ? (e.nama+' — '+e.jabatan) : '— Pilih Karyawan —';
+}
+
+function loadHistory(){
+  const s = sGet('gajiHistoryV1');
+  if (s) { try { history = JSON.parse(s); } catch(e){ history = []; } }
+  renderHistory();
+}
+function saveToHistory(){
+  if (!lastSlip){ toast('Belum ada slip','error'); return; }
+  const rec = {id:lastSlip.id, empId:lastSlip.empId, nama:lastSlip.nama, period:lastSlip.period, total:lastSlip.total, slipHTML:lastSlip.html, savedAt:new Date().toISOString()};
+  const idx = history.findIndex(h => h.empId===rec.empId && h.period===rec.period);
+  if (idx >= 0) history[idx] = rec; else history.unshift(rec);
+  sSet('gajiHistoryV1', JSON.stringify(history));
+  renderHistory();
+  toast('Slip '+rec.nama+' ('+rec.period+') tersimpan','success');
+}
+function viewHistory(id){
+  const h = history.find(x => x.id === id); if (!h) return;
+  document.getElementById('slipTable').innerHTML = h.slipHTML;
+  document.getElementById('slipModalTitle').textContent = 'Slip — '+h.nama+' ('+h.period+')';
+  lastSlip = {id:h.id, empId:h.empId, nama:h.nama, period:h.period, total:h.total, html:h.slipHTML};
+  document.getElementById('slipOverlay').classList.add('show');
+}
+function delHistory(id){
+  const h = history.find(x => x.id === id); if (!h) return;
+  showConfirm('Hapus riwayat '+h.nama+' ('+h.period+')?', function(){
+    history = history.filter(x => x.id !== id);
+    sSet('gajiHistoryV1', JSON.stringify(history));
+    renderHistory();
+    toast('Riwayat dihapus','success');
+  });
+}
+function renderHistory(){
+  const el = document.getElementById('histList');
+  if (!history.length){ el.innerHTML = '<div class="emp-empty">Belum ada riwayat gaji.<br>Hitung gaji lalu klik "Simpan" pada popup slip.</div>'; return; }
+  const groups = {};
+  history.forEach(h => { (groups[h.nama] = groups[h.nama] || []).push(h); });
+  let html = '';
+  Object.keys(groups).forEach(n => {
+    html += '<div class="hist-group"><div class="hist-name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'+esc(n)+'</div>';
+    groups[n].forEach(h => {
+      html += `<div class="hist-item"><div><strong>${h.period}</strong><div class="sub">Disimpan ${new Date(h.savedAt).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}</div></div>
+      <div style="text-align:right"><div class="amt">Rp ${fmt(h.total)}</div>
+      <div style="display:flex;gap:6px;justify-content:flex-end;margin-top:5px">
+        <button class="btn btn-outline btn-sm" onclick="viewHistory('${h.id}')">Lihat Slip</button>
+        <button class="btn-danger-sm" onclick="delHistory('${h.id}')">Hapus</button>
+      </div></div></div>`;
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function toggleHoliday(){
+  const b = document.getElementById('holidayBody');
+  const t = document.getElementById('holTitle');
+  const open = b.style.display !== 'none';
+  b.style.display = open ? 'none' : 'block';
+  t.classList.toggle('open', !open);
+  if (!open) renderHolidays();
+}
+function loadHolidays(){
+  const saved = sGet('gajiHolidaysV3');
+  if (saved) { try { holidays = JSON.parse(saved); } catch(e){ holidays = []; } }
+  if (!holidays || !holidays.length) { loadDefaultHolidays(false); return; }
+  renderHolidays();
+}
+function saveHolidays(){ sSet('gajiHolidaysV3', JSON.stringify(holidays)); }
+function loadDefaultHolidays(recalc){
+  const t = curTahun;
+  let list;
+  if (t === 2026) {
+    list = [
+      ['01-01','Tahun Baru Masehi'],['01-16','Isra Mi\'raj Nabi Muhammad SAW'],
+      ['02-17','Tahun Baru Imlek 2577'],['03-19','Hari Raya Nyepi'],
+      ['03-20','Idul Fitri 1447 H (Hari 1)'],['03-21','Idul Fitri 1447 H (Hari 2)'],
+      ['04-03','Wafat Isa Al Masih'],['05-01','Hari Buruh Internasional'],
+      ['05-14','Kenaikan Isa Al Masih'],['05-27','Idul Adha 1447 H'],
+      ['05-31','Hari Raya Waisak'],['06-01','Hari Lahir Pancasila'],
+      ['06-16','Tahun Baru Islam 1448 H'],['08-17','Hari Kemerdekaan RI'],
+      ['08-25','Maulid Nabi Muhammad SAW'],['12-25','Hari Raya Natal']
+    ];
+  } else {
+    list = [['01-01','Tahun Baru Masehi'],['05-01','Hari Buruh Internasional'],['06-01','Hari Lahir Pancasila'],['08-17','Hari Kemerdekaan RI'],['12-25','Hari Raya Natal']];
+  }
+  holidays = list.map(x => ({date: t+'-'+x[0], name: x[1]}));
+  saveHolidays(); renderHolidays();
+  if (recalc !== false) calcOtomatis();
+  toast('Hari libur default dimuat','info');
+}
+function addHoliday(){
+  const d = document.getElementById('holidayDate').value;
+  const n = document.getElementById('holidayName').value.trim();
+  if (!d || !n){ toast('Isi tanggal & nama libur!','error'); return; }
+  if (holidays.some(h => h.date===d)){ toast('Tanggal sudah ada!','error'); return; }
+  holidays.push({date:d,name:n});
+  holidays.sort((a,b) => a.date<b.date?-1:1);
+  saveHolidays(); renderHolidays(); calcOtomatis();
+  document.getElementById('holidayDate').value=''; document.getElementById('holidayName').value='';
+  toast('Tanggal merah ditambahkan','success');
+}
+function removeHoliday(i){ holidays.splice(i,1); saveHolidays(); renderHolidays(); calcOtomatis(); }
+function renderHolidays(){
+  const el = document.getElementById('holidayList');
+  document.getElementById('holCount').textContent = holidays.length;
+  if (!holidays.length){ el.innerHTML = '<p style="color:var(--muted);text-align:center;padding:16px;">Belum ada hari libur.</p>'; return; }
+  const MN = ['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'];
+  let html = '', curKey = '';
+  holidays.forEach((h, i) => {
+    const d = parseDate(h.date);
+    const key = d.getFullYear()+'-'+d.getMonth();
+    if (key !== curKey) { curKey = key; html += '<div class="hol-month">'+MN[d.getMonth()]+' '+d.getFullYear()+'</div>'; }
+    html += `<div class="holiday-item"><span>${formatDate(h.date)} — <strong>${esc(h.name)}</strong></span><button class="btn-danger-sm" onclick="removeHoliday(${i})">Hapus</button></div>`;
+  });
+  el.innerHTML = html;
+}
+
+function calNav(dir){
+  calB += dir;
+  if (calB < 0){ calB = 11; calY--; }
+  if (calB > 11){ calB = 0; calY++; }
+  renderCalendar();
+}
+function syncCal(){ calB = curBulan; calY = curTahun; }
+function getWorkingDays(){
+  const c = settings.cutoff || 27;
+  const last = new Date(curTahun, curBulan+1, 0).getDate();
+  const end = Math.min(c, last);
+  let wk = 0;
+  for (let d=1; d<=end; d++){
+    const dow = new Date(curTahun,curBulan,d).getDay();
+    const ds = curTahun+'-'+String(curBulan+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    if (dow!==0 && !holidays.some(h => h.date===ds)) wk++;
+  }
+  return wk;
+}
+function calcOtomatis(){
+  const e = currentEmp();
+  if (!e){
+    document.getElementById('hariKerja').value = '';
+    document.getElementById('hariMasuk').value = '';
+    renderCalendar();
+    return;
+  }
+  const wk = getWorkingDays();
+  const i = parseInt(document.getElementById('ijin').value)||0;
+  const s = parseInt(document.getElementById('sakit').value)||0;
+  const a = parseInt(document.getElementById('alpha').value)||0;
+  const c = parseInt(document.getElementById('cuti').value)||0;
+  document.getElementById('hariKerja').value = wk;
+  document.getElementById('hariMasuk').value = Math.max(0, wk-i-s-a-c);
+  updatePotInfo();
+  renderCalendar();
+}
+function renderCalendar(){
+  const el = document.getElementById('calendarPreview'); if (!el) return;
+  const c = settings.cutoff || 27;
+  const MN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const DN = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  document.getElementById('calTitle').textContent = MN[calB] + ' ' + calY;
+  const last = new Date(calY,calB+1,0).getDate();
+  const first = new Date(calY,calB,1).getDay();
+  const isPeriode = (calB === curBulan && calY === curTahun);
+  let h = '<div class="calendar-grid">';
+  for (let i=0;i<7;i++) h += '<div class="cal-day header">'+DN[i]+'</div>';
+  for (let i=0;i<first;i++) h += '<div class="cal-day empty"></div>';
+  for (let d=1;d<=last;d++){
+    const dow = new Date(calY,calB,d).getDay();
+    const ds = calY+'-'+String(calB+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const hol = holidays.find(x => x.date===ds);
+    let cls = 'cal-day ';
+    if (isPeriode && d>c) cls+='empty'; else if (dow===0) cls+='off'; else if (hol) cls+='holiday'; else cls+='work';
+    h += '<div class="'+cls+'" title="'+(hol?esc(hol.name):'')+'">'+d+'</div>';
+  }
+  el.innerHTML = h+'</div>';
+}
+
+function switchSub(name){
+  document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sub-content').forEach(el => el.classList.remove('active'));
+  document.querySelector('.sub-tab[data-sub="'+name+'"]').classList.add('active');
+  document.getElementById('sub-'+name).classList.add('active');
+}
+
+function row(lbl, eq, qty, rate, amt, cls){
+  return `<tr class="${cls||''}"><td class="lbl wrap">${lbl}</td><td class="eq">${eq}</td><td class="qty">${qty}</td><td class="rate">${rate}</td><td class="amt">${amt}</td></tr>`;
+}
+function hitungGaji(){
+  try {
+    const e = currentEmp();
+    if (!e){ toast('Pilih karyawan dulu!','error'); return; }
+
+    const MN = ['JANUARI','FEBRUARI','MARET','APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOVEMBER','DESEMBER'];
+    const period = MN[curBulan] + ' ' + String(curTahun).slice(2);
+
+    const gajiPokok = e.gaji, rateMakan = e.makan, p1 = e.p1, p2 = e.p2;
+    const wk = getWorkingDays();
+    const masuk = parseInt(document.getElementById('hariMasuk').value)||0;
+    const ijin = parseInt(document.getElementById('ijin').value)||0;
+    const sakit = parseInt(document.getElementById('sakit').value)||0;
+    const alpha = parseInt(document.getElementById('alpha').value)||0;
+    const cuti = parseInt(document.getElementById('cuti').value)||0;
+    const terlambat = parseInt(document.getElementById('terlambat').value)||0;
+    const lemburRHari = parseFloat(document.getElementById('lemburRHari').value)||0;
+    const lemburTHari = parseFloat(document.getElementById('lemburTHari').value)||0;
+    const lemburRAmt = lemburRHari * e.lr;
+    const lemburTAmt = lemburTHari * e.lt;
+
+    const potIzin = ijin * (settings.potIzinRate||0);
+    const potSakit = sakit * (settings.potSakitRate||0);
+    const potAlpha = alpha * (settings.potAlphaRate||0);
+
+    const activeDeds = (e.deductions||[]).map(d => ({d, info: dedInfo(d, curTahun, curBulan)})).filter(x => x.info.hit && x.info.m>0);
+    const dedTotal = activeDeds.reduce((s,x) => s + x.info.m, 0);
+
+    const premi1Q = (alpha===0 && terlambat===0) ? 1 : 0;
+    const premi2Q = (masuk>=wk && ijin===0 && sakit===0 && alpha===0) ? 1 : 0;
+    const premi1Amt = premi1Q * gajiPokok * p1/100;
+    const premi2Amt = premi2Q * gajiPokok * p2/100;
+
+    const subtotal = gajiPokok - potIzin - potSakit - potAlpha + lemburRAmt + lemburTAmt + premi1Amt + premi2Amt;
+    const makanAmt = masuk * rateMakan;
+    const totalSebenarnya = subtotal + makanAmt;
+    const totalPotongan = potIzin + potSakit + potAlpha + dedTotal;
+    const totalDiterima = totalSebenarnya - totalPotongan;
+
+    let h = '';
+    if (settings.nama) {
+      h += `<tr><td colspan="5" style="text-align:center;font-size:13px;letter-spacing:2px;padding-bottom:4px;border-bottom:1px solid #000">${esc(settings.nama).toUpperCase()}</td></tr><tr class="sp"><td colspan="5"></td></tr>`;
+    }
+    h += `<tr><td colspan="3" class="title" style="text-align:left;padding:6px 4px">SLIP GAJI KARYAWAN</td><td colspan="2" style="text-align:right;padding:6px 4px;letter-spacing:1px">${period}</td></tr>`;
+    h += row('NAMA', ':', esc(e.nama), esc(e.jabatan), fmt(gajiPokok));
+    h += row('CABANG', ':', esc(e.cabang||'-'), '', '');
+    h += '<tr class="spacer"><td colspan="5"></td></tr>';
+    h += row('HARI KERJA', '=', wk, '', '');
+    h += row('MASUK', '=', masuk, '', '');
+    h += row('IJIN', '=', ijin, '', potIzin>0 ? '('+fmt(potIzin)+')' : '0');
+    h += row('SAKIT', '=', fmt2(sakit), '', potSakit>0 ? '('+fmt(potSakit)+')' : '0');
+    h += row('ALPHA', '-', fmt2(alpha), '', potAlpha>0 ? '('+fmt(potAlpha)+')' : '0');
+    h += row('CUTI', '', fmt2(cuti), '', '0');
+    h += row('TERLAMBAT', '', fmt2(terlambat), '', '0');
+    h += '<tr class="spacer"><td colspan="5"></td></tr>';
+    h += row('LEMBUR RUTIN', '', fmt2(lemburRHari), lemburRHari>0 ? fmt(e.lr) : '0', fmt(lemburRAmt));
+    h += row('LEMBUR TAMBAHAN', '', fmt2(lemburTHari), lemburTHari>0 ? fmt(e.lt) : '0', fmt(lemburTAmt));
+    h += row('PREMI HADIR 1 ('+p1+'%)', '', fmt2(premi1Q)+' X', p1+'%', fmt(premi1Amt));
+    h += row('PREMI HADIR 2 ('+p2+'%)', '', fmt2(premi2Q)+' X', p2+'%', fmt(premi2Amt), 'line');
+    h += row('', '', '', '', fmt(subtotal));
+    h += row('UANG MAKAN', '', masuk+' X', fmt(rateMakan), fmt(makanAmt), 'total');
+    h += row('TOTAL GAJI SEBENARNYA', '', '', '', fmt(totalSebenarnya));
+    h += '<tr class="sp"><td colspan="5"></td></tr>';
+    h += '<tr class="section"><td colspan="5" style="padding-left:4px">POTONGAN</td></tr>';
+    if (potIzin>0) h += row('POT. IZIN ('+ijin+' HARI)', '', '', '', '('+fmt(potIzin)+')');
+    if (potSakit>0) h += row('POT. SAKIT ('+sakit+' HARI)', '', '', '', '('+fmt(potSakit)+')');
+    if (potAlpha>0) h += row('POT. ALPHA ('+alpha+' HARI)', '', '', '', '('+fmt(potAlpha)+')');
+    activeDeds.forEach(x => { h += row(esc(x.d.nama).toUpperCase()+' (CICILAN)', '', x.info.sisa+' x', fmt(x.info.m), '('+fmt(x.info.m)+')'); });
+    if (!potIzin && !potSakit && !potAlpha && !activeDeds.length) h += row('TIDAK ADA POTONGAN', '', '', '', '0');
+    h += row('', '', '', '', '('+fmt(totalPotongan)+')', 'line');
+    h += row('TOTAL YANG DITERIMA', '', '', '', fmt(totalDiterima), 'grand');
+
+    document.getElementById('slipTable').innerHTML = h;
+    document.getElementById('slipModalTitle').textContent = 'Slip Gaji — '+e.nama+' ('+period+')';
+    lastSlip = {id: e.id+'_'+period, empId:e.id, nama:e.nama, period, total:totalDiterima, html:h};
+    document.getElementById('slipOverlay').classList.add('show');
+  } catch(err) {
+    toast('Error: '+err.message,'error');
+  }
+}
+function closeSlip(){ document.getElementById('slipOverlay').classList.remove('show'); }
+
+function handleNav(name){
+  if (name === 'data' && !dataUnlocked) { showPass(); return; }
+  switchTab(name);
+}
+function switchTab(name){
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('tab-'+name); if (el) el.classList.add('active');
+  const btn = document.querySelector('.nav-btn[data-tab="'+name+'"]'); if (btn) btn.classList.add('active');
+  document.getElementById('topActions').style.display = (name==='data') ? 'flex' : 'none';
+  if (name==='calendar') { renderCalendar(); renderHolidays(); }
+  if (name==='history') renderHistory();
+  if (name==='data') renderEmployees();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter') {
+    if (document.getElementById('passOverlay').classList.contains('show')) checkPass();
+    else if (document.getElementById('loginOverlay').classList.contains('show')) checkLogin();
+  }
+});
+
+document.addEventListener('DOMContentLoaded', function(){
+  const now = new Date();
+  curBulan = now.getMonth();
+  curTahun = now.getFullYear();
+  document.getElementById('tahun').value = curTahun;
+  document.getElementById('csBulanVal').textContent = MONTHS[curBulan];
+  document.querySelectorAll('[data-version]').forEach(el => el.textContent = APP_VERSION);
+  loadSettings();
+  loadHolidays(); loadEmployees(); loadHistory();
+  syncCal();
+  loadSelectedEmp();
+  if (settings.loginPass) document.getElementById('loginOverlay').classList.add('show');
+  document.getElementById('tahun').addEventListener('change', function(){
+    curTahun = parseInt(this.value) || curTahun;
+    syncCal(); calcOtomatis();
+  });
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.protocol === 'http:')) {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+});
+</script>
+</body>
+</html>
