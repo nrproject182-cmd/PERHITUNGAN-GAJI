@@ -3,14 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
 <meta name="theme-color" content="#0066cc">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/svg+xml" href="icon.svg">
-<link rel="apple-touch-icon" href="icon.svg">
-<title>Penghitungan Gaji</title>
+<title>Aplikasi Perhitungan Gaji Karyawan v2.1</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -23,7 +18,8 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:16px 16px 100px;font-size:14px}
 .container{max-width:1000px;margin:0 auto}
 .topbar{display:flex;align-items:center;gap:14px;margin:4px 0 22px}
-img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14px rgba(0,102,204,.35)}
+.logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#0066cc,#004a99);display:flex;align-items:center;justify-content:center;color:#fff;flex:none;box-shadow:0 4px 14px rgba(0,102,204,.3)}
+.logo svg{width:26px;height:26px}
 .topbar .titles{flex:1;min-width:0}
 .topbar h1{font-size:1.15em;font-weight:700;letter-spacing:-.3px}
 .topbar p{font-size:.75em;color:var(--muted);margin-top:3px;font-weight:500}
@@ -54,7 +50,12 @@ img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
 .form-group input[readonly]{background:var(--primary-light);color:var(--primary);font-weight:700;border-color:var(--primary-light)}
 .s1{grid-column:span 1}.s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}
-.periode-grid{display:grid;grid-template-columns:1fr 108px;gap:12px}
+
+/* PERIODE LAYOUT - SAME HEIGHT */
+.periode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
+.periode-grid .csel{height:48px;min-height:48px}
+.periode-grid input{height:48px}
+
 .att-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .att-grid input{text-align:center;font-weight:700}
 .ro-row{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px dashed var(--border);font-size:.82em}
@@ -78,6 +79,8 @@ img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14
 .btn-block{width:100%;justify-content:center}
 .btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
 .tab-content{display:none}.tab-content.active{display:block}
+
+/* ===== CUSTOM SELECT ===== */
 .csel{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border:1.5px solid var(--border);border-radius:8px;background:#fff;cursor:pointer;font-weight:600;font-size:.95em;transition:all .15s;min-height:44px}
 .csel:hover{border-color:var(--primary)}
 .csel svg{width:16px;height:16px;color:var(--muted);flex:none}
@@ -144,7 +147,6 @@ img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14
 .icon-btn svg{width:16px;height:16px}
 .sub-title{display:flex;align-items:center;gap:8px;font-size:.75em;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px;padding-top:14px;border-top:1px solid var(--border)}
 .sub-title svg{width:15px;height:15px}
-.sub-title.first{margin-top:0;border-top:none;padding-top:0}
 .sub-tabs{display:flex;gap:4px;background:#eef2f7;padding:4px;border-radius:10px;margin-bottom:14px}
 .sub-tab{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border:none;border-radius:7px;background:transparent;color:var(--muted);font-size:.78em;font-weight:700;cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.5px}
 .sub-tab svg{width:15px;height:15px}
@@ -163,7 +165,7 @@ img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14
 .ded-result strong{color:var(--accent)}
 .ded-result .months{color:var(--primary)}
 .ded-empty{font-size:.78em;color:var(--muted);text-align:center;padding:10px;background:var(--bg);border:1.5px dashed var(--border);border-radius:8px;margin-bottom:8px}
-.confirm-box{background:#fff;border-radius:20px;padding:26px 22px;max-width:360px;width:calc(100% - 40px);text-align:center;animation:up .25s;box-shadow:0 20px 50px rgba(0,0,0,.3);margin:auto}
+.confirm-box{background:#fff;border-radius:20px;padding:26px 22px;max-width:340px;width:calc(100% - 40px);text-align:center;animation:up .25s;box-shadow:0 20px 50px rgba(0,0,0,.3);margin:auto}
 .confirm-box .c-icon{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
 .confirm-box .c-icon.red{background:var(--accent-light);color:var(--accent)}
 .confirm-box .c-icon.blue{background:var(--primary-light);color:var(--primary)}
@@ -175,13 +177,15 @@ img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14
 .pass-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
 .pass-input.shake{animation:shake .3s;border-color:var(--accent)}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.72em;margin:14px 0;text-transform:uppercase;letter-spacing:1px;font-weight:700}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ===== LOGIN ===== */
 .login-overlay{align-items:center;justify-content:center;background:linear-gradient(160deg,#0d2440,#123a6b);z-index:600}
 .login-box{background:#fff;border-radius:20px;padding:28px 22px;width:calc(100% - 60px);max-width:360px;text-align:center;animation:up .3s;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.login-box img.logo{margin:0 auto 12px;display:block;width:68px;height:68px}
+.login-box .logo{margin:0 auto 12px}
 .login-box h2{font-size:1.1em;margin-bottom:4px}
 .login-box p{font-size:.78em;color:var(--muted);margin-bottom:16px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.72em;margin:14px 0;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
 .toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-90px);padding:11px 20px;border-radius:12px;font-size:.82em;font-weight:700;z-index:700;display:flex;gap:9px;align-items:center;transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 8px 24px rgba(0,0,0,.25);color:#fff;max-width:calc(100% - 30px)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast svg{width:16px;height:16px;flex:none}
@@ -190,39 +194,50 @@ img.logo{width:52px;height:52px;border-radius:13px;flex:none;box-shadow:0 4px 14
 .toast.info{background:var(--primary)}
 @keyframes fade{from{opacity:0}}
 @keyframes up{from{transform:translateY(50px);opacity:0}}
-.paper{background:#fff;color:#000;font-family:'Courier New',Courier,monospace;font-weight:700;padding:22px;max-width:860px;margin:0 auto;box-shadow:0 4px 20px rgba(0,0,0,.12);border:1px solid var(--border)}
+
+/* ===== PRINT STYLES - PROFESSIONAL ===== */
+.paper{background:#fff;color:#000;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;font-weight:600;padding:0;max-width:100%;margin:0 auto;box-shadow:none}
 .modal-body .paper{margin:0;max-width:100%;box-shadow:none}
-.frame{border:3px double #000;padding:14px 18px}
-table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;table-layout:fixed}
-.slip td{padding:3px 2px;vertical-align:top;color:#000;overflow:hidden;white-space:nowrap}
-.slip td.wrap{white-space:normal}
-.slip .lbl{width:46%;padding-left:2px}
-.slip .eq{width:4%;text-align:center}
-.slip .qty{width:12%;text-align:right;font-variant-numeric:tabular-nums}
-.slip .rate{width:12%;text-align:right;font-variant-numeric:tabular-nums}
-.slip .amt{width:26%;text-align:right;font-variant-numeric:tabular-nums;padding-right:4px}
-.slip .title{text-align:center;font-size:16px;letter-spacing:3px;white-space:normal}
-.slip .section td{padding-top:12px}
+.frame{border:none;padding:0}
+table.slip{width:100%;border-collapse:collapse;font-size:12px;line-height:1.6;table-layout:fixed}
+.slip td{padding:4px 3px;vertical-align:top;color:#000;overflow:hidden;white-space:nowrap}
+.slip td.wrap{white-space:normal;word-break:break-word}
+.slip .name{white-space:normal;word-break:break-word;text-align:right;font-weight:700;padding-right:6px}
+.slip .lbl{width:32%;padding-left:6px;font-weight:600}
+.slip .eq{width:3%;text-align:center}
+.slip .qty{width:18%;text-align:right;font-variant-numeric:tabular-nums}
+.slip .rate{width:19%;text-align:right;font-variant-numeric:tabular-nums}
+.slip .amt{width:28%;text-align:right;font-variant-numeric:tabular-nums;padding-right:6px;font-weight:700}
+.slip .title{text-align:center;font-size:16px;letter-spacing:3px;white-space:normal;font-weight:800;text-transform:uppercase}
+.slip .section td{padding-top:14px;font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:1px}
 .slip tr.line .amt{border-top:1.5px solid #000}
 .slip tr.total .amt{border-top:1.5px solid #000}
-.slip tr.grand td{border-top:1.5px solid #000;font-size:14px;padding-top:6px}
-.slip tr.grand .amt{border-bottom:3px double #000}
-.slip .sp{height:12px}
-.slip .spacer td{height:12px}
+.slip tr.grand td{border-top:2px double #000;font-size:14px;padding-top:8px;font-weight:800}
+.slip tr.grand .amt{border-bottom:2px double #000}
+.slip .sp{height:10px}
+.slip .spacer td{height:10px}
+.slip .company{font-size:14px;letter-spacing:2px;padding-bottom:6px;border-bottom:2px solid #000;margin-bottom:10px;text-align:center;font-weight:800;text-transform:uppercase}
+.slip .period{text-align:right;padding:6px 4px;letter-spacing:1px;font-weight:700}
+.ver-badge{margin-left:auto;background:var(--primary);color:#fff;padding:4px 12px;border-radius:20px;font-size:.7em;font-weight:800;letter-spacing:1px;flex:none}
+
 @media (max-width:700px){
   .form-grid{grid-template-columns:repeat(2,1fr)}
   .s2,.s3,.s4{grid-column:span 2}
   .att-grid{grid-template-columns:repeat(4,1fr)}
   .att-grid .form-group label{font-size:.6em}
-  .paper{padding:12px}
-  .frame{padding:10px}
-  table.slip{font-size:9.5px}
-  .slip .title{font-size:12px;letter-spacing:2px}
-  .slip tr.grand td{font-size:10.5px}
+  .modal-body{padding:8px}
+  .paper{padding:4px}
+  .frame{padding:0}
+  table.slip{font-size:10px}
+  .slip .lbl{width:28%}
+  .slip .qty{width:20%}
+  .slip .rate{width:21%}
+  .slip .title{font-size:13px;letter-spacing:2px}
   .ded-grid{grid-template-columns:1.2fr .6fr 1fr}
   .pick-row .btn{padding:11px 14px}
   .sub-tab{font-size:.68em;padding:8px 6px}
 }
+
 @media print{
   body{padding:0;background:#fff}
   body *{visibility:hidden}
@@ -231,7 +246,8 @@ table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;t
   .modal{position:static!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;border-radius:0}
   .modal-body{overflow:visible!important;padding:0}
   .modal-head,.modal-foot,.bottomnav,.toast{display:none!important}
-  #modalPaper{position:absolute;left:0;top:0;width:100%;max-width:100%;box-shadow:none;border:none;padding:8px}
+  #modalPaper{position:absolute;left:0;top:0;width:100%;max-width:100%;box-shadow:none;border:none;padding:15px}
+  @page{margin:1cm}
 }
 </style>
 </head>
@@ -239,10 +255,10 @@ table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;t
 <div class="container">
 
   <header class="topbar">
-    <img class="logo" src="icon.svg" alt="Logo Penghitungan Gaji">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
     <div class="titles">
-      <h1>Penghitungan Gaji</h1>
-      <p>Aplikasi penghitungan gaji karyawan &bull; v<span data-version>1.1.0</span></p>
+      <h1>Sistem Penggajian Karyawan</h1>
+      <p>Perhitungan otomatis dari kalender &bull; cut-off sesuai pengaturan</p>
     </div>
     <div class="top-actions" id="topActions">
       <button class="lock-btn" onclick="lockData()" title="Kunci Data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
@@ -268,7 +284,7 @@ table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;t
         <div class="form-group">
           <div class="csel" onclick="openCSel('bulan','Pilih Bulan')"><span id="csBulanVal">-</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
         </div>
-        <div class="form-group"><label>Tahun</label><input type="number" id="tahun" value="2026"></div>
+        <div class="form-group"><input type="number" id="tahun" value="2026" placeholder="Tahun"></div>
       </div>
     </div>
 
@@ -365,9 +381,9 @@ table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;t
 <!-- LOGIN -->
 <div class="overlay login-overlay" id="loginOverlay">
   <div class="login-box">
-    <img class="logo" src="icon.svg" alt="Logo">
-    <h2>Penghitungan Gaji</h2>
-    <p>Masukkan password untuk masuk &bull; v<span data-version>1.1.0</span></p>
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+    <h2>Sistem Penggajian Karyawan</h2>
+    <p>Masukkan password untuk masuk aplikasi</p>
     <input type="password" id="loginPassInput" class="pass-input" placeholder="• • • •" autocomplete="off">
     <button class="btn btn-primary btn-block" onclick="checkLogin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Masuk</button>
     <div class="divider"><span>atau</span></div>
@@ -408,14 +424,12 @@ table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;t
   <div class="confirm-box">
     <div class="c-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     <h4>Akses Data Karyawan</h4>
-    <p>Masukkan password atau gunakan sidik jari</p>
+    <p>Masukkan password untuk mengakses data sensitif</p>
     <input type="password" id="passInput" class="pass-input" placeholder="• • • •" autocomplete="off">
     <div class="btn-row">
       <button class="btn btn-outline" onclick="closePass()">Batal</button>
       <button class="btn btn-primary" onclick="checkPass()">Masuk</button>
     </div>
-    <div class="divider"><span>atau</span></div>
-    <button class="btn btn-outline btn-block" onclick="passFingerprint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg> Masuk dengan Sidik Jari</button>
   </div>
 </div>
 
@@ -425,28 +439,22 @@ table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;t
     <div class="modal-head">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <h3>Pengaturan Perusahaan</h3>
+      <span class="ver-badge" id="versionBadge">v2.1</span>
       <button class="icon-btn" onclick="closeSettings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
-      <div class="sub-title first"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-4h6v4"/></svg> Perusahaan</div>
       <div class="form-grid">
         <div class="form-group s2"><label>Nama Perusahaan</label><input type="text" id="stNama" placeholder="PT ..."></div>
         <div class="form-group"><label>Tanggal Cut-off</label><input type="number" id="stCutoff" value="27" min="1" max="31"></div>
+        <div class="form-group"><label>Password Login Aplikasi</label><input type="text" id="stLoginPass" placeholder="cth: 1234"></div>
+        <div class="form-group"><label>Password Akses Data</label><input type="text" id="stPass" placeholder="cth: 1234"></div>
         <div class="form-group"><label>Pot. Izin / Hari</label><input type="text" inputmode="numeric" class="rp" id="stPotIzin" placeholder="Rp 0"></div>
         <div class="form-group"><label>Pot. Sakit / Hari</label><input type="text" inputmode="numeric" class="rp" id="stPotSakit" placeholder="Rp 0"></div>
         <div class="form-group"><label>Pot. Alpha / Hari</label><input type="text" inputmode="numeric" class="rp" id="stPotAlpha" placeholder="Rp 0"></div>
       </div>
-
-      <div class="sub-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Keamanan & Ubah Password</div>
-      <div class="form-grid">
-        <div class="form-group s2"><label>Password Lama (verifikasi)</label><input type="password" id="stOldPass" placeholder="wajib diisi jika ganti password" autocomplete="off"></div>
-        <div class="form-group"><label>Password Login Baru</label><input type="text" id="stLoginPass" placeholder="kosongkan jika tetap" autocomplete="off"></div>
-        <div class="form-group"><label>Password Data Baru</label><input type="text" id="stPass" placeholder="kosongkan jika tetap" autocomplete="off"></div>
-      </div>
       <div class="btn-row" style="margin-top:12px">
-        <button class="btn btn-outline btn-sm" onclick="enableFingerprint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg> Aktifkan Sidik Jari</button>
+        <button class="btn btn-outline btn-sm" onclick="enableFingerprint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/></svg> Aktifkan Login Sidik Jari</button>
       </div>
-
       <div class="sub-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Daftar Cabang</div>
       <div class="chips" id="stCabChips"></div>
       <div class="add-holiday-row">
@@ -510,7 +518,18 @@ table.slip{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;t
 <div class="toast" id="toast"></div>
 
 <script>
-const APP_VERSION = '1.1.0';
+// ===== VERSION MANAGEMENT =====
+// PENTING: Setiap upload update baru, naikkan nomor versi di SINI dan di sw.js
+const APP_VERSION = '2.1.0';
+
+// ===== SERVICE WORKER REGISTRATION =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+
+// ===== DATA & STATE =====
 let holidays = [], employees = [], history = [], settings = null, currentEmpId = null, lastSlip = null, confirmCb = null, toastTimer = null, modalDeds = [], modalCab = [];
 let calB = 0, calY = 2026, dataUnlocked = false;
 let curEmp = '', curBulan = 0, curTahun = 2026, curCabang = '', cselKey = null;
@@ -555,6 +574,7 @@ function dedInfo(d, tahun, bulan){
 }
 function defaultStart(){ return curTahun + '-' + String(curBulan+1).padStart(2,'0'); }
 
+// ===== RP + UX =====
 function rpSet(id, num){
   const el = document.getElementById(id);
   el.dataset.raw = String(num||0);
@@ -590,6 +610,7 @@ function updateDedResult(item){
   if (st) st.innerHTML = 'Cicilan per bulan: <strong>Rp ' + fmt(calcMonthly(nom, tenor)) + '</strong><br>Dipotong di bulan: <span class="months">' + scheduleLabel(start, tenor) + '</span>';
 }
 
+// ===== TOAST & CONFIRM =====
 function toast(msg, type){
   const t = document.getElementById('toast');
   t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' + msg;
@@ -601,6 +622,7 @@ function showConfirm(msg, cb){ document.getElementById('confirmMsg').textContent
 function closeConfirm(){ document.getElementById('confirmOverlay').classList.remove('show'); confirmCb = null; }
 function doConfirm(){ document.getElementById('confirmOverlay').classList.remove('show'); if (confirmCb) confirmCb(); confirmCb = null; }
 
+// ===== LOGIN + FINGERPRINT =====
 function checkLogin(){
   const v = document.getElementById('loginPassInput').value;
   if (v === settings.loginPass) { enterApp(); }
@@ -614,7 +636,24 @@ function enterApp(){
   document.getElementById('loginOverlay').classList.remove('show');
   toast('Selamat datang!','success');
 }
-async function verifyFingerprint(onSuccess){
+async function enableFingerprint(){
+  if (!window.PublicKeyCredential) { toast('Perangkat tidak mendukung sidik jari','error'); return; }
+  try {
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp: { name: 'Aplikasi Gaji' },
+        user: { id: new Uint8Array([1,2,3,4,5,6]), name: 'admin', displayName: 'Admin' },
+        pubKeyCredParams: [{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+        authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required' },
+        timeout: 60000
+      }
+    });
+    sSet('gajiFingerCred', btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(cred.rawId)))));
+    toast('Sidik jari aktif! Bisa login pakai sidik jari','success');
+  } catch(e) { toast('Gagal aktifkan sidik jari','error'); }
+}
+async function loginFingerprint(){
   const saved = sGet('gajiFingerCred');
   if (!saved || !window.PublicKeyCredential) { toast('Sidik jari belum diaktifkan / tidak didukung','error'); return; }
   try {
@@ -627,36 +666,11 @@ async function verifyFingerprint(onSuccess){
         timeout: 60000
       }
     });
-    onSuccess();
+    enterApp();
   } catch(e) { toast('Verifikasi sidik jari gagal','error'); }
 }
-function loginFingerprint(){ verifyFingerprint(enterApp); }
-function passFingerprint(){
-  verifyFingerprint(function(){
-    dataUnlocked = true;
-    closePass();
-    switchTab('data');
-    toast('Akses Data dibuka','success');
-  });
-}
-async function enableFingerprint(){
-  if (!window.PublicKeyCredential) { toast('Perangkat tidak mendukung sidik jari','error'); return; }
-  try {
-    const cred = await navigator.credentials.create({
-      publicKey: {
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp: { name: 'Penghitungan Gaji' },
-        user: { id: new Uint8Array([1,2,3,4,5,6]), name: 'admin', displayName: 'Admin' },
-        pubKeyCredParams: [{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
-        authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required' },
-        timeout: 60000
-      }
-    });
-    sSet('gajiFingerCred', btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(cred.rawId)))));
-    toast('Sidik jari aktif!','success');
-  } catch(e) { toast('Gagal aktifkan sidik jari','error'); }
-}
 
+// ===== PASSWORD DATA =====
 function showPass(){
   document.getElementById('passInput').value = '';
   document.getElementById('passInput').classList.remove('shake');
@@ -683,6 +697,7 @@ function lockData(){
   toast('Data dikunci','info');
 }
 
+// ===== SETTINGS =====
 function loadSettings(){
   settings = {nama:'PT BIOLI LESTARI', potIzinRate:103334, potSakitRate:0, potAlphaRate:103334, cutoff:27, cabangs:['PUSAT'], password:'1234', loginPass:'1234'};
   const s = sGet('gajiSettingsV4');
@@ -691,9 +706,8 @@ function loadSettings(){
 function openSettings(){
   document.getElementById('stNama').value = settings.nama || '';
   document.getElementById('stCutoff').value = settings.cutoff || 27;
-  document.getElementById('stOldPass').value = '';
-  document.getElementById('stLoginPass').value = '';
-  document.getElementById('stPass').value = '';
+  document.getElementById('stLoginPass').value = settings.loginPass || '';
+  document.getElementById('stPass').value = settings.password || '';
   rpSet('stPotIzin', settings.potIzinRate);
   rpSet('stPotSakit', settings.potSakitRate);
   rpSet('stPotAlpha', settings.potAlphaRate);
@@ -704,7 +718,7 @@ function openSettings(){
 function closeSettings(){ document.getElementById('setOverlay').classList.remove('show'); }
 function renderStCab(){
   document.getElementById('stCabChips').innerHTML = modalCab.map((c,i) =>
-    '<span class="chip">'+esc(c)+' <button onclick="delCabModal('+i+')">✕</button></span>').join('') ||
+    '<span class="chip">'+esc(c)+' <button onclick="delCabModal('+i+')"></button></span>').join('') ||
     '<span style="font-size:.78em;color:var(--muted)">Belum ada cabang.</span>';
 }
 function addCabangModal(){
@@ -719,18 +733,10 @@ function delCabModal(i){ modalCab.splice(i,1); renderStCab(); }
 function saveSettings(){
   settings.nama = document.getElementById('stNama').value.trim();
   settings.cutoff = Math.min(31, Math.max(1, parseInt(document.getElementById('stCutoff').value)||27));
-  const oldPass = document.getElementById('stOldPass').value;
-  const newLogin = document.getElementById('stLoginPass').value.trim();
-  const newData = document.getElementById('stPass').value.trim();
-  const changeLogin = newLogin && newLogin !== settings.loginPass;
-  const changeData = newData && newData !== settings.password;
-  if (changeLogin || changeData) {
-    if (!oldPass) { toast('Masukkan password lama untuk mengganti password!','error'); return; }
-    if (changeLogin && oldPass !== settings.loginPass) { toast('Password lama salah!','error'); return; }
-    if (changeData && oldPass !== settings.password) { toast('Password lama salah!','error'); return; }
-    if (changeLogin) settings.loginPass = newLogin;
-    if (changeData) settings.password = newData;
-  }
+  const lp = document.getElementById('stLoginPass').value.trim();
+  if (lp) settings.loginPass = lp;
+  const dp = document.getElementById('stPass').value.trim();
+  if (dp) settings.password = dp;
   settings.potIzinRate = rpGet('stPotIzin');
   settings.potSakitRate = rpGet('stPotSakit');
   settings.potAlphaRate = rpGet('stPotAlpha');
@@ -741,6 +747,7 @@ function saveSettings(){
   toast('Pengaturan perusahaan disimpan','success');
 }
 
+// ===== CUSTOM SELECT =====
 function cselOptions(key){
   if (key==='emp') return employees.map(e => ({v:e.id, l:e.nama+' — '+e.jabatan}));
   if (key==='bulan') return MONTHS.map((m,i) => ({v:i, l:m}));
@@ -762,11 +769,12 @@ function closeCSel(){ document.getElementById('cselOverlay').classList.remove('s
 function pickCSel(i){
   const o = cselOptions(cselKey)[i]; if (!o) return;
   if (cselKey==='emp') { curEmp = o.v; renderEmpSelect(); loadSelectedEmp(); }
-  else if (cselKey==='bulan') { curBulan = o.v; document.getElementById('csBulanVal').textContent = o.l; syncCal(); calcOtomatis(); }
+  else if (cselKey==='bulan') { curBulan = o.v; document.getElementById('csBulanVal').textContent = o.l; syncCal(); resetAttendance(); }
   else if (cselKey==='cabang') { curCabang = o.v; document.getElementById('csCabangVal').textContent = o.l; }
   closeCSel();
 }
 
+// ===== EMPLOYEES =====
 function loadEmployees(){
   const saved = sGet('gajiEmployeesV5');
   if (saved) { try { employees = JSON.parse(saved); } catch(e){ employees = []; } }
@@ -914,6 +922,7 @@ function renderEmpSelect(){
   document.getElementById('csEmpVal').textContent = e ? (e.nama+' — '+e.jabatan) : '— Pilih Karyawan —';
 }
 
+// ===== HISTORY =====
 function loadHistory(){
   const s = sGet('gajiHistoryV1');
   if (s) { try { history = JSON.parse(s); } catch(e){ history = []; } }
@@ -927,6 +936,10 @@ function saveToHistory(){
   sSet('gajiHistoryV1', JSON.stringify(history));
   renderHistory();
   toast('Slip '+rec.nama+' ('+rec.period+') tersimpan','success');
+  // Tutup popup, balik ke tab input, reset semua kolom inputan
+  closeSlip();
+  switchTab('input');
+  resetAttendance();
 }
 function viewHistory(id){
   const h = history.find(x => x.id === id); if (!h) return;
@@ -965,6 +978,7 @@ function renderHistory(){
   el.innerHTML = html;
 }
 
+// ===== HOLIDAYS =====
 function toggleHoliday(){
   const b = document.getElementById('holidayBody');
   const t = document.getElementById('holTitle');
@@ -1029,6 +1043,7 @@ function renderHolidays(){
   el.innerHTML = html;
 }
 
+// ===== CALENDAR =====
 function calNav(dir){
   calB += dir;
   if (calB < 0){ calB = 11; calY--; }
@@ -1038,15 +1053,35 @@ function calNav(dir){
 function syncCal(){ calB = curBulan; calY = curTahun; }
 function getWorkingDays(){
   const c = settings.cutoff || 27;
-  const last = new Date(curTahun, curBulan+1, 0).getDate();
-  const end = Math.min(c, last);
+  const prevMonth = curBulan === 0 ? 11 : curBulan - 1;
+  const prevYear = curBulan === 0 ? curTahun - 1 : curTahun;
+  const lastDayPrevMonth = new Date(prevYear, prevMonth + 1, 0).getDate();
+  
   let wk = 0;
-  for (let d=1; d<=end; d++){
-    const dow = new Date(curTahun,curBulan,d).getDay();
-    const ds = curTahun+'-'+String(curBulan+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    if (dow!==0 && !holidays.some(h => h.date===ds)) wk++;
+  
+  // Hitung dari tanggal cutoff+1 bulan sebelumnya
+  const startDay = c + 1;
+  for (let d = startDay; d <= lastDayPrevMonth; d++){
+    const dow = new Date(prevYear, prevMonth, d).getDay();
+    const ds = prevYear + '-' + String(prevMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    if (dow !== 0 && !holidays.some(h => h.date === ds)) wk++;
   }
+  
+  // Hitung dari tanggal 1 sampai cut-off bulan ini
+  for (let d = 1; d <= c; d++){
+    const dow = new Date(curTahun, curBulan, d).getDay();
+    const ds = curTahun + '-' + String(curBulan + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    if (dow !== 0 && !holidays.some(h => h.date === ds)) wk++;
+  }
+  
   return wk;
+}
+// Reset semua kolom inputan kehadiran & lembur (dipakai saat simpan / pindah periode)
+function resetAttendance(){
+  ['ijin','sakit','alpha','cuti','terlambat','lemburRHari','lemburTHari'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  calcOtomatis();
 }
 function calcOtomatis(){
   const e = currentEmp();
@@ -1056,13 +1091,16 @@ function calcOtomatis(){
     renderCalendar();
     return;
   }
+  
   const wk = getWorkingDays();
   const i = parseInt(document.getElementById('ijin').value)||0;
   const s = parseInt(document.getElementById('sakit').value)||0;
   const a = parseInt(document.getElementById('alpha').value)||0;
   const c = parseInt(document.getElementById('cuti').value)||0;
+  
   document.getElementById('hariKerja').value = wk;
   document.getElementById('hariMasuk').value = Math.max(0, wk-i-s-a-c);
+  
   updatePotInfo();
   renderCalendar();
 }
@@ -1089,6 +1127,7 @@ function renderCalendar(){
   el.innerHTML = h+'</div>';
 }
 
+// ===== SUB-TABS =====
 function switchSub(name){
   document.querySelectorAll('.sub-tab').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.sub-content').forEach(el => el.classList.remove('active'));
@@ -1096,6 +1135,7 @@ function switchSub(name){
   document.getElementById('sub-'+name).classList.add('active');
 }
 
+// ===== SLIP =====
 function row(lbl, eq, qty, rate, amt, cls){
   return `<tr class="${cls||''}"><td class="lbl wrap">${lbl}</td><td class="eq">${eq}</td><td class="qty">${qty}</td><td class="rate">${rate}</td><td class="amt">${amt}</td></tr>`;
 }
@@ -1140,10 +1180,10 @@ function hitungGaji(){
 
     let h = '';
     if (settings.nama) {
-      h += `<tr><td colspan="5" style="text-align:center;font-size:13px;letter-spacing:2px;padding-bottom:4px;border-bottom:1px solid #000">${esc(settings.nama).toUpperCase()}</td></tr><tr class="sp"><td colspan="5"></td></tr>`;
+      h += `<tr><td colspan="5" class="company">${esc(settings.nama)}</td></tr><tr class="sp"><td colspan="5"></td></tr>`;
     }
-    h += `<tr><td colspan="3" class="title" style="text-align:left;padding:6px 4px">SLIP GAJI KARYAWAN</td><td colspan="2" style="text-align:right;padding:6px 4px;letter-spacing:1px">${period}</td></tr>`;
-    h += row('NAMA', ':', esc(e.nama), esc(e.jabatan), fmt(gajiPokok));
+    h += `<tr><td colspan="3" class="title" style="text-align:left;padding:6px 4px">SLIP GAJI KARYAWAN</td><td colspan="2" class="period">${period}</td></tr>`;
+    h += `<tr><td class="lbl">NAMA</td><td class="eq">:</td><td colspan="2" class="name">${esc(e.nama)} (${esc(e.jabatan)})</td><td class="amt">${fmt(gajiPokok)}</td></tr>`;
     h += row('CABANG', ':', esc(e.cabang||'-'), '', '');
     h += '<tr class="spacer"><td colspan="5"></td></tr>';
     h += row('HARI KERJA', '=', wk, '', '');
@@ -1181,6 +1221,7 @@ function hitungGaji(){
 }
 function closeSlip(){ document.getElementById('slipOverlay').classList.remove('show'); }
 
+// ===== TABS + GATES =====
 function handleNav(name){
   if (name === 'data' && !dataUnlocked) { showPass(); return; }
   switchTab(name);
@@ -1210,7 +1251,7 @@ document.addEventListener('DOMContentLoaded', function(){
   curTahun = now.getFullYear();
   document.getElementById('tahun').value = curTahun;
   document.getElementById('csBulanVal').textContent = MONTHS[curBulan];
-  document.querySelectorAll('[data-version]').forEach(el => el.textContent = APP_VERSION);
+  document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
   loadSettings();
   loadHolidays(); loadEmployees(); loadHistory();
   syncCal();
@@ -1218,11 +1259,8 @@ document.addEventListener('DOMContentLoaded', function(){
   if (settings.loginPass) document.getElementById('loginOverlay').classList.add('show');
   document.getElementById('tahun').addEventListener('change', function(){
     curTahun = parseInt(this.value) || curTahun;
-    syncCal(); calcOtomatis();
+    syncCal(); resetAttendance();
   });
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.protocol === 'http:')) {
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  }
 });
 </script>
 </body>
